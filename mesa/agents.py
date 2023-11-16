@@ -19,6 +19,7 @@ class SemaphoreAgent(Agent):
         super().__init__(unique_id, model)
         self.pos = pos
         self.state = state
+        self.timer = 0
 
     def change_state(self):
         if self.state == 'red':
@@ -28,5 +29,8 @@ class SemaphoreAgent(Agent):
         self.state = new_state
 
     def step(self):
-        pass
+        self.timer += 1
+        if self.timer == 5:
+            self.change_state()
+            self.timer = 0
         
