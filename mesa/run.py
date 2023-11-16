@@ -1,6 +1,6 @@
 from mesa.visualization import ModularServer
 from mesa.visualization.modules import CanvasGrid
-from agents import CarAgent, SemaphoreAgent
+from agents import CarAgent, BuildingAgent, SemaphoreAgent
 from models import TrafficModel
 from map import grid_size
 
@@ -34,6 +34,15 @@ def color_agent(agent):
                     "w": 1,
                     "h": 1
                     }
+    if isinstance(agent, BuildingAgent):
+        color = {
+                "Shape": "rect",
+                "Color": agent.color,
+                "Filled": "true",
+                "Layer": 0,
+                "w": 1,
+                "h": 1
+                }
     return color
 
 

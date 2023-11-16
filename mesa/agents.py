@@ -14,6 +14,15 @@ class CarAgent(Agent):
     def step(self):
         pass
 
+class BuildingAgent(Agent):
+    def __init__(self, unique_id, model, pos, color):
+        super().__init__(unique_id, model)
+        self.pos = pos
+        self.color = color
+
+    def step(self):
+        pass
+
 class SemaphoreAgent(Agent):
     def __init__(self, unique_id, model, pos, state):
         super().__init__(unique_id, model)

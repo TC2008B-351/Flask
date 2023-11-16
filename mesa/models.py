@@ -1,8 +1,8 @@
 from mesa import Model
 from mesa.space import MultiGrid
 from mesa.time import RandomActivation
-from agents import CarAgent, SemaphoreAgent
-from map import Parkings, Semaphores
+from agents import CarAgent, BuildingAgent, SemaphoreAgent
+from map import Parkings, Buildings, Semaphores
 
 class TrafficModel(Model):
     """
@@ -24,6 +24,12 @@ class TrafficModel(Model):
             self.schedule.add(a)
             self.grid.place_agent(a, coord)
         # 2 Building agents
+        for data in Buildings:
+            coord, color = data
+            a = BuildingAgent(ids, self, coord, color)
+            ids += 1
+            self.schedule.add(a)
+            self.grid.place_agent(a, coord)
         # 3 Semaphores agents
         for data in Semaphores:
             coord, state = data
