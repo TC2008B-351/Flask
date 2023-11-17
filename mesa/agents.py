@@ -1,9 +1,8 @@
 from mesa import Agent
 import random
-from map import Steps, Parkings
+from aStar import astar, create_graph, manhattan_distance
+from map import Parkings, grafo_info
 
-def buildPathFrom():
-    pass
 
 class CarAgent(Agent):
     def __init__(self, unique_id, model, pos):
@@ -13,8 +12,9 @@ class CarAgent(Agent):
         self.path = self.buildPath(self.pos, self.target_pos)
 
     @staticmethod
-    def buildPath(current_coords, target_coords, steps = Steps):
-        pass
+    def buildPath(current_coords, target_coords):
+        G = create_graph(grafo_info)
+        return astar(G, current_coords, target_coords, manhattan_distance)
 
     def move(self):
         target_coordinates = self.path.pop(0)

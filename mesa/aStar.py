@@ -86,13 +86,13 @@ def astar(graph, start, goal, heuristic):
 """ Display path on grid function with 0,0 at bottom left on the terminal """
 def display_path_on_grid(path, grid_size):
     grid = [['.' for _ in range(grid_size[1])] for _ in range(grid_size[0])]
-    
+
     for node in path:
         # Adjusting coordinates for display
         adjusted_x = grid_size[0] - 1 - node[1]
         adjusted_y = node[0]
         grid[adjusted_x][adjusted_y] = '*'
-    
+
     for row in grid:
         print(' '.join(row))
 
