@@ -1,6 +1,6 @@
 import networkx as nx
 import heapq
-from map import grid_size, edges
+from map import grid_size, grafo_info
 
 # Define Manhattan distance heuristic
 def manhattan_distance(node1, node2):
@@ -8,13 +8,17 @@ def manhattan_distance(node1, node2):
 
 # Create a directed graph
 G = nx.DiGraph()
-
+for node, connections in grafo_info.items():
+            for neighbor, cost in connections.items():
+                G.add_edge(node, neighbor, weight=cost)
+"""
 # Add nodes
 nodes = [(x, y) for x in range(grid_size) for y in range(grid_size)]
 G.add_nodes_from(nodes)
 
 # Add edges with weights
 G.add_edges_from(edges)
+"""
 
 # A* algorithm implementation using Manhattan distance as a heuristic
 def astar(graph, start, goal, heuristic):
@@ -61,8 +65,8 @@ def display_path_on_grid(path, grid_size):
         print(' '.join(row))
 
 # Find path using A* with Manhattan distance heuristic
-start_node = (0, 0)
-goal_node = (3, 1)
+start_node = (1, 1)
+goal_node = (19, 19)
 path = astar(G, start_node, goal_node, manhattan_distance)
 
 print('Path from {} to {}:'.format(start_node, goal_node))
