@@ -1,6 +1,6 @@
 import networkx as nx
 import heapq
-from map import grid_size, grafo_info
+from map import grid_size, IntersectionPoints
 
 """ Get a list of intermediate steps between two points on the grid """
 def get_intermediate_steps(origin, goal):
@@ -32,11 +32,11 @@ def manhattan_distance(node1, node2):
     return abs(node2[0] - node1[0]) + abs(node2[1] - node1[1])
 
 """ Create the problem directed graph """
-def create_graph(grafo_info):
+def create_graph(IntersectionPoints):
     graph = nx.DiGraph()
-    for node, connections in grafo_info.items():
-                for neighbor, cost in connections.items():
-                    graph.add_edge(node, neighbor, weight=cost)
+    for node, connections in IntersectionPoints.items():
+        for neighbor, cost in connections.items():
+            graph.add_edge(node, neighbor, weight=cost)
     return graph
 """
 # Add nodes
@@ -99,7 +99,7 @@ def display_path_on_grid(path, grid_size):
 """ Test """
 def test():
     print("Hello World")
-    G = create_graph(grafo_info)
+    G = create_graph(IntersectionPoints)
     # Find path using A* with Manhattan distance heuristic
     start_node = (1, 1)
     goal_node = (19, 19)

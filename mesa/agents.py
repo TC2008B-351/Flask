@@ -1,33 +1,44 @@
 from mesa import Agent
-import random
-from aStar import astar, create_graph, manhattan_distance
-from map import Parkings, grafo_info
-
 
 class CarAgent(Agent):
-    def __init__(self, unique_id, model, pos):
+    def __init__(self, unique_id, model, pos, path):
         super().__init__(unique_id, model)
         self.pos = pos
-        self.target_pos = random.choice(Parkings)
-        self.path = self.buildPath(self.pos, self.target_pos)
-
-    @staticmethod
-    def buildPath(current_coords, target_coords):
-        G = create_graph(grafo_info)
-        return astar(G, current_coords, target_coords, manhattan_distance)
+        self.path = path
 
     def move(self):
+        if not self.path:
+            return
         target_coordinates = self.path.pop(0)
         cell_contents = self.model.grid.get_cell_list_contents([target_coordinates])
+        # checks for semaphores
         traffic_lights = [obj for obj in cell_contents if isinstance(obj, SemaphoreAgent)]
+        #checks for parking lots
+        parking_lot = [obj for obj in cell_contents if isinstance(obj, ParkingLotAgent)]
 
         if not traffic_lights or traffic_lights[0].state == "green":
             # Move only if there are no traffic lights or the traffic light is green
-            self.model.grid.move_agent(self, target_coordinates)
-            self.pos = target_coordinates
+            if not parking_lot or not parking_lot[0].is_occupied:
+            # Move only if the parking lot is unoccupied
+                self.model.grid.move_agent(self, target_coordinates)
+                self.pos = target_coordinates
+                if parking_lot:
+                    parking_lot[0].occupy()
 
     def step(self):
         self.move()
+
+class ParkingLotAgent(Agent):
+    def __init__(self, unique_id, model, pos):
+        super().__init__(unique_id, model)
+        self.pos = pos
+        self.is_occupied = False
+
+    def occupy(self):
+        self.is_occupied = True
+
+    def vacate(self):
+        self.is_occupied = False
 
 class BuildingAgent(Agent):
     def __init__(self, unique_id, model, pos, color):
@@ -42,18 +53,20 @@ class SemaphoreAgent(Agent):
     def __init__(self, unique_id, model, pos, state):
         super().__init__(unique_id, model)
         self.pos = pos
-        self.state = state
-        self.timer = 0
+        self.state = state # States: "red", "green"
+        self.timer = 5  # Initial Time
 
     def change_state(self):
-        if self.state == 'red':
-            new_state = 'green'
+        if self.state == 'red' and self.timer == 0:
+            self.state = 'green'
+            self.timer = 2  # Green light duration
+        elif self.state == 'green' and self.timer == 0:
+            self.state = 'red'
+            self.timer = 5  # Red light duration
         else:
-            new_state = 'red'
-        self.state = new_state
+            self.timer -= 1
+
 
     def step(self):
-        self.timer += 1
-        if self.timer == 5:
-            self.change_state()
-            self.timer = 0
+        self.change_state()
+
