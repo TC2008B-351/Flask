@@ -11,9 +11,9 @@ class TrafficModel(Model):
     A model that simulates traffic flow. From cars agents trying to reach
     their destination.
     """
-    def __init__(self, width, height, n_cars):
+    def __init__(self, width, height, n_agents):
         self.G = create_graph(IntersectionPoints)
-        self.num_cars = n_cars
+        self.num_agents = n_agents  # unused 
         self.grid = MultiGrid(width, height, True)
         self.schedule = RandomActivation(self)
 
@@ -41,11 +41,13 @@ class TrafficModel(Model):
             self.schedule.add(s)
             self.grid.place_agent(s, coord)
         # Car agents
-        for _ in range(n_cars):
-            starting_pos = random.choice(list(IntersectionPoints.keys()))
-            target_pos = random.choice(Parkings)
+        starts = list(IntersectionPoints.keys())
+        random.shuffle(starts)
+        targets = Parkings[:]
+        for _ in range(len(targets)):
+            starting_pos = starts.pop()
+            target_pos = targets.pop()
             path = astar(self.G, starting_pos, target_pos, manhattan_distance)
-            path_HC = [(2,1), (2,2)]
             c = CarAgent(ids, self, starting_pos, path)
             ids += 1
             self.schedule.add(c)

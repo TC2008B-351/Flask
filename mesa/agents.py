@@ -15,15 +15,19 @@ class CarAgent(Agent):
         traffic_lights = [obj for obj in cell_contents if isinstance(obj, SemaphoreAgent)]
         #checks for parking lots
         parking_lot = [obj for obj in cell_contents if isinstance(obj, ParkingLotAgent)]
+        # checks for other cars
+        other_cars = [obj for obj in cell_contents if isinstance(obj, CarAgent) and obj != self]
 
         if not traffic_lights or traffic_lights[0].state == "green":
             # Move only if there are no traffic lights or the traffic light is green
             if not parking_lot or not parking_lot[0].is_occupied:
-            # Move only if the parking lot is unoccupied
-                self.model.grid.move_agent(self, target_coordinates)
-                self.pos = target_coordinates
-                if parking_lot:
-                    parking_lot[0].occupy()
+                # Move only if the parking lot is unoccupied
+                if not other_cars:
+                    # Move only if the target cell is not occupied by another car
+                    self.model.grid.move_agent(self, target_coordinates)
+                    self.pos = target_coordinates
+                    if parking_lot:
+                        parking_lot[0].occupy()
 
     def step(self):
         self.move()

@@ -111,4 +111,4 @@ def test():
     # Display the path on the grid
     display_path_on_grid(path, (grid_size, grid_size))
 
-test()
+# test()

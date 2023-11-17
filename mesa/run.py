@@ -58,7 +58,7 @@ def color_agent(agent):
 grid = CanvasGrid(color_agent,grid_size, grid_size)
 
 server = ModularServer(
-    TrafficModel, [grid], "Traffic Model", {"width": grid_size, "height": grid_size, "n_cars": 6}
+    TrafficModel, [grid], "Traffic Model", {"width": grid_size, "height": grid_size, "n_agents": 1}
 )
 
 server.port = 8521
