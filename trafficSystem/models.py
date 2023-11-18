@@ -2,16 +2,16 @@ import random
 from mesa import Model
 from mesa.space import MultiGrid
 from mesa.time import RandomActivation
-from agents import CarAgent, ParkingLotAgent, BuildingAgent, SemaphoreAgent
-from map import IntersectionPoints, Parkings, Buildings, Semaphores
-from aStar import create_graph, astar, manhattan_distance
+from .agents import CarAgent, ParkingLotAgent, BuildingAgent, SemaphoreAgent
+from .map import IntersectionPoints, Parkings, Buildings, Semaphores
+from .aStar import create_graph, astar, manhattan_distance
 
 class TrafficModel(Model):
     """
     A model that simulates traffic flow. From cars agents trying to reach
     their destination.
     """
-    
+
     def __init__(self, width, height, n_agents):
         self.G = create_graph(IntersectionPoints)
         self.num_agents = n_agents  # unused

@@ -1,10 +1,15 @@
 from flask import Flask, request
 import json
-from mesa.models import TrafficModel
+from trafficSystem.models import TrafficModel
+from trafficSystem.map import grid_size
 
 app = Flask(__name__)
 
 model = TrafficModel()
+server = ModularServer(grid_size, grid_size, 1
+    TrafficModel, [grid], "Traffic Model", {"width": grid_size, "height": grid_size, "n_agents": 1}
+)
+
 
 @app.route('/')
 def index():

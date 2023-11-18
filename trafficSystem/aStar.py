@@ -1,6 +1,6 @@
 import networkx as nx
 import heapq
-from map import grid_size, IntersectionPoints
+from .map import grid_size, IntersectionPoints
 
 """ Get a list of intermediate steps between two points on the grid """
 def get_intermediate_steps(origin, goal):
