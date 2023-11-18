@@ -18,9 +18,21 @@ class TrafficModel(Model):
         self.grid = MultiGrid(width, height, True)
         self.schedule = RandomActivation(self)
 
-        ids = 0
+        ids = 1
 
         """ Create agents """
+        # Car agents
+        starts = list(IntersectionPoints.keys())
+        random.shuffle(starts)
+        targets = Parkings[:]
+        for _ in range(len(targets)):
+            starting_pos = starts.pop()
+            target_pos = targets.pop()
+            path = astar(self.G, starting_pos, target_pos, manhattan_distance)
+            c = CarAgent(ids, self, starting_pos, path)
+            ids += 1
+            self.schedule.add(c)
+            self.grid.place_agent(c, starting_pos)
         # Parking Lot agents
         for coord in Parkings:
             pl = ParkingLotAgent(ids, self, coord)
@@ -41,18 +53,6 @@ class TrafficModel(Model):
             ids += 1
             self.schedule.add(s)
             self.grid.place_agent(s, coord)
-        # Car agents
-        starts = list(IntersectionPoints.keys())
-        random.shuffle(starts)
-        targets = Parkings[:]
-        for _ in range(len(targets)):
-            starting_pos = starts.pop()
-            target_pos = targets.pop()
-            path = astar(self.G, starting_pos, target_pos, manhattan_distance)
-            c = CarAgent(ids, self, starting_pos, path)
-            ids += 1
-            self.schedule.add(c)
-            self.grid.place_agent(c, starting_pos)
 
     def step(self):
         self.schedule.step()
@@ -61,7 +61,7 @@ class TrafficModel(Model):
         carPositions = []
         for agent in self.schedule.agents:
             if isinstance(agent, CarAgent):
-                id = agent.id
+                id = agent.unique_id
                 x_coord, y_coord = agent.pos
                 carPositions.append([id, x_coord, y_coord])
-        return carPositions
+        return sorted(carPositions, key= lambda x: x[0])

@@ -5,11 +5,14 @@ from trafficSystem.map import grid_size
 
 app = Flask(__name__)
 
-model = TrafficModel()
-server = ModularServer(grid_size, grid_size, 1
-    TrafficModel, [grid], "Traffic Model", {"width": grid_size, "height": grid_size, "n_agents": 1}
-)
+model = TrafficModel(grid_size, grid_size, 1)
 
+def toJSON(lists):
+    result_dict = {"cars": {}}
+    for list in lists:
+        car_pos = {"x": json.dumps(list[1]), "y": json.dumps(list[2])}
+        result_dict["cars"][json.dumps(list[0])] = car_pos
+    return result_dict
 
 @app.route('/')
 def index():
@@ -20,11 +23,11 @@ def getPositions():
     if request.method == 'GET':
         positions = model.getPositions()
         model.step()
-        print(json.dumps(positions))
-        return 0
-        # return "{'positions:'"+p2+"}"
+        # print(toJSON(positions))
+        return toJSON(positions)
 
 if __name__ == '__main__':
-    p1 = model.getPositions()
-    print(json.dumps(p1))
-    app.run(debug=True, port=8000)
+    intial_positions = model.getPositions()
+    # print("Initial Positions:")
+    # print(toJSON(intial_positions))
+    app.run(debug=False, port=8000)
