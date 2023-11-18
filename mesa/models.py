@@ -11,9 +11,10 @@ class TrafficModel(Model):
     A model that simulates traffic flow. From cars agents trying to reach
     their destination.
     """
+    
     def __init__(self, width, height, n_agents):
         self.G = create_graph(IntersectionPoints)
-        self.num_agents = n_agents  # unused 
+        self.num_agents = n_agents  # unused
         self.grid = MultiGrid(width, height, True)
         self.schedule = RandomActivation(self)
 
@@ -53,6 +54,14 @@ class TrafficModel(Model):
             self.schedule.add(c)
             self.grid.place_agent(c, starting_pos)
 
-
     def step(self):
         self.schedule.step()
+
+    def getPositions(self):
+        carPositions = []
+        for agent in self.schedule.agents:
+            if isinstance(agent, CarAgent):
+                id = agent.id
+                x_coord, y_coord = agent.pos
+                carPositions.append([id, x_coord, y_coord])
+        return carPositions
