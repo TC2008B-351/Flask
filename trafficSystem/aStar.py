@@ -1,6 +1,6 @@
 import networkx as nx
 import heapq
-from .map import grid_size, IntersectionPoints
+from .map import grid_size, IntersectionPoints, Buildings
 
 """ Get a list of intermediate steps between two points on the grid """
 def get_intermediate_steps(origin, goal):
@@ -38,14 +38,6 @@ def create_graph(IntersectionPoints):
         for neighbor, cost in connections.items():
             graph.add_edge(node, neighbor, weight=cost)
     return graph
-"""
-# Add nodes
-nodes = [(x, y) for x in range(grid_size) for y in range(grid_size)]
-G.add_nodes_from(nodes)
-
-# Add edges with weights
-G.add_edges_from(edges)
-"""
 
 """ A* algorithm implementation using Manhattan distance as a heuristic """
 def astar(graph, start, goal, heuristic):
@@ -87,14 +79,28 @@ def astar(graph, start, goal, heuristic):
 def display_path_on_grid(path, grid_size):
     grid = [['.' for _ in range(grid_size[1])] for _ in range(grid_size[0])]
 
-    for node in path:
+    for node, color in Buildings:
         # Adjusting coordinates for display
         adjusted_x = grid_size[0] - 1 - node[1]
         adjusted_y = node[0]
         grid[adjusted_x][adjusted_y] = '*'
 
-    for row in grid:
-        print(' '.join(row))
+    path_len = len(path)
+    for i, node in enumerate(path):
+        # Adjusting coordinates for display
+        adjusted_x = grid_size[0] - 1 - node[1]
+        adjusted_y = node[0]
+
+        # Displaying the path
+        if i == 0:
+            grid[adjusted_x][adjusted_y] = 'S'
+        elif i == path_len - 1:
+            grid[adjusted_x][adjusted_y] = 'G'
+        else:
+            grid[adjusted_x][adjusted_y] = '#'
+
+    grid_content = '\n' + '\n'.join([''.join(row) for row in grid])
+    return grid_content
 
 """ Test """
 def test():
@@ -109,6 +115,6 @@ def test():
     print(path)
 
     # Display the path on the grid
-    display_path_on_grid(path, (grid_size, grid_size))
+    print(display_path_on_grid(path, (grid_size, grid_size)))
 
 # test()

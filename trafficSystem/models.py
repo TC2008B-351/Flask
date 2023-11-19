@@ -1,10 +1,15 @@
 import random
+from logging import info
+from .logging.log_conf import setup_logging
 from mesa import Model
 from mesa.space import MultiGrid
 from mesa.time import RandomActivation
 from .agents import CarAgent, ParkingLotAgent, BuildingAgent, SemaphoreAgent
-from .map import IntersectionPoints, Parkings, Buildings, Semaphores
-from .aStar import create_graph, astar, manhattan_distance
+from .map import IntersectionPoints, Parkings, Buildings, Semaphores, grid_size
+from .aStar import create_graph, astar, manhattan_distance, display_path_on_grid
+
+# Import the logging configuration
+setup_logging()
 
 class TrafficModel(Model):
     """
@@ -33,6 +38,9 @@ class TrafficModel(Model):
             ids += 1
             self.schedule.add(c)
             self.grid.place_agent(c, starting_pos)
+            info(f"Car {c.unique_id} created at {starting_pos} with target {target_pos}")
+            info(f"Path: {path}")
+            info(display_path_on_grid(path, (grid_size, grid_size)))
         # Parking Lot agents
         for coord in Parkings:
             pl = ParkingLotAgent(ids, self, coord)

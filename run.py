@@ -1,8 +1,8 @@
 from mesa.visualization import ModularServer
 from mesa.visualization.modules import CanvasGrid
-from .agents import CarAgent, ParkingLotAgent, BuildingAgent, SemaphoreAgent
-from .models import TrafficModel
-from .map import grid_size
+from trafficSystem.agents import CarAgent, ParkingLotAgent, BuildingAgent, SemaphoreAgent
+from trafficSystem.models import TrafficModel
+from trafficSystem.map import grid_size
 
 def color_agent(agent):
     color = {}
