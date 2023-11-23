@@ -67,10 +67,10 @@ class SemaphoreAgent(Agent):
     def change_state(self):
         if self.state == 'red' and self.timer == 0:
             self.state = 'green'
-            self.timer = 2  # Green light duration
+            self.timer = 3  # Green light duration
         elif self.state == 'green' and self.timer == 0:
             self.state = 'red'
-            self.timer = 5  # Red light duration
+            self.timer = 3  # Red light duration
         else:
             self.timer -= 1
 
