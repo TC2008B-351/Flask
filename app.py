@@ -8,26 +8,30 @@ app = Flask(__name__)
 model = TrafficModel(grid_size, grid_size, 1)
 
 def toJSON(lists):
-    result_dict = {"cars": {}}
-    for list in lists:
-        car_pos = {"x": json.dumps(list[1]), "y": json.dumps(list[2])}
-        result_dict["cars"][json.dumps(list[0])] = car_pos
-    return result_dict
+    cars = []
+    for item in lists:
+        cars.append({"id": json.dumps(item[0]),
+                     "x": json.dumps(item[1]),
+                     "z": json.dumps(item[2]),
+                     "rotation": json.dumps(item[3])
+                    })
+    return cars
 
 @app.route('/')
 def index():
     return "My API is running!"
 
-@app.route('/getPositions', methods=['GET'])
+@app.route('/getState', methods=['GET'])
 def getPositions():
     if request.method == 'GET':
-        positions = model.getPositions()
+        state = model.getState()
         model.step()
-        # print(toJSON(positions))
-        return toJSON(positions)
+        print(toJSON(state))
+        return toJSON(state)
 
 if __name__ == '__main__':
-    intial_positions = model.getPositions()
-    # print("Initial Positions:")
-    # print(toJSON(intial_positions))
-    app.run(debug=False, port=8000)
+    intial_state = model.getState()
+    # print("Initial State:")
+    print(toJSON(intial_state))
+    app.run(debug=True, port=8000)
+
