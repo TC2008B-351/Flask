@@ -7,7 +7,7 @@ app = Flask(__name__)
 
 model = TrafficModel(grid_size, grid_size, 1)
 
-def toJSON(lists):
+def carToJSON(lists):
     cars_list = [
         {
         "id": json.dumps(car_data[0]),
@@ -22,40 +22,38 @@ def toJSON(lists):
     result_dict = {"Items": cars_list}
     return result_dict
 
-def toJSONSem(lists):
-    sem_List = [
+def semaphoreToJSON(lists):
+    sem_list = [
         {
             "id": json.dumps(sem_data[0]),
-            "s1": json.dumps(sem_data[1])
+            "state": json.dumps(sem_data[1])
         }
         for sem_data in lists]
-    result_dict1 = {"Semaphores": sem_List}
-    return result_dict1
-
+    result_dict = {"Semaphores": sem_list}
+    return result_dict
 
 @app.route('/')
 def index():
     return "My API is running!"
 
 @app.route('getSemaphoreState', methods=['GET'])
-def getStateSemaph():
+def getSemaphoreState():
     if request.method == 'GET':
-        state = model.getSemaphore()
-        return toJSON(state)
-
+        state = model.getSemaphoreState()
+        return carToJSON(state)
 
 @app.route('/getState', methods=['GET'])
-def getPositions():
+def getCarPositions():
     if request.method == 'GET':
-        state = model.getState()
+        state = model.getCarState()
         model.step()
-        print(toJSON(state))
-        return toJSON(state)
+        #print(toJSON(state))
+        return semaphoreToJSON(state)
 
 if __name__ == '__main__':
     intial_state = model.getState()
-    print("Initial State:")
-    print(toJSON(intial_state))
+    #print("Initial State:")
+    #print(toJSON(intial_state))
     app.run(debug=True, port=8000)
 
 

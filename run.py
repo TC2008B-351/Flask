@@ -18,7 +18,7 @@ def color_agent(agent):
     if isinstance(agent, ParkingLotAgent):
         color = {
                 "Shape": "rect",
-                "Color": "yellow",
+                "Color": "orange",
                 "Filled": "true",
                 "Layer": 0,
                 "w": 1,
@@ -29,6 +29,15 @@ def color_agent(agent):
             color = {
                     "Shape": "rect",
                     "Color": "red",
+                    "Filled": "true",
+                    "Layer": 0,
+                    "w": 1,
+                    "h": 1
+                    }
+        elif agent.state == 'yellow':
+            color = {
+                    "Shape": "rect",
+                    "Color": "yellow",
                     "Filled": "true",
                     "Layer": 0,
                     "w": 1,

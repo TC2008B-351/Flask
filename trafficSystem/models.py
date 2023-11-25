@@ -108,7 +108,7 @@ class TrafficModel(Model):
             # Handle the exception here, you can log it or print an error message
             print(f"An error occurred: {e}")
 
-    def getState(self):
+    def getCarState(self):
         carPositions = []
         for agent in self.schedule.agents:
             if isinstance(agent, CarAgent):
@@ -124,14 +124,13 @@ class TrafficModel(Model):
                     x3_coord, y3_coord = x2_coord, y2_coord
                 carPositions.append([id, x1_coord, y1_coord, x2_coord, y2_coord, x3_coord, y3_coord])
         return sorted(carPositions, key= lambda x: x[0])
-    
-    def getSemaphore(self):
-        carLight = []
+
+    def getSemaphoreState(self):
+        carLights = []
         for agent in self.schedule.agents:
             if isinstance(agent, SemaphoreAgent):
                 id = agent.unique_id
                 state = agent.state
-                carLight.append(id, state)
+                carLights.append([id, state])
+        return sorted(carLights, key= lambda x: x[0])
 
-        return carLight
-                
