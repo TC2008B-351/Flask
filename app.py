@@ -8,14 +8,19 @@ app = Flask(__name__)
 model = TrafficModel(grid_size, grid_size, 1)
 
 def toJSON(lists):
-    cars = []
-    for item in lists:
-        cars.append({"id": json.dumps(item[0]),
-                     "x": json.dumps(item[1]),
-                     "z": json.dumps(item[2]),
-                     "rotation": json.dumps(item[3])
-                    })
-    return cars
+    cars_list = [
+        {
+        "id": json.dumps(car_data[0]),
+        "x1": json.dumps(car_data[1]),
+        "z1": json.dumps(car_data[2]),
+        "x2": json.dumps(car_data[3]),
+        "z2": json.dumps(car_data[4]),
+        "x3": json.dumps(car_data[5]),
+        "z3": json.dumps(car_data[6])
+        }
+        for car_data in lists]
+    result_dict = {"Items": cars_list}
+    return result_dict
 
 @app.route('/')
 def index():
@@ -31,7 +36,7 @@ def getPositions():
 
 if __name__ == '__main__':
     intial_state = model.getState()
-    # print("Initial State:")
+    print("Initial State:")
     print(toJSON(intial_state))
     app.run(debug=True, port=8000)
 

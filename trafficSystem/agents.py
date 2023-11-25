@@ -96,12 +96,3 @@ class SemaphoreAgent(Agent):
 
     def step(self):
         self.change_state()
-
-
-# Example usage:
-start_coords = [1, 1]
-current_coords = [2, 1]
-future_coords = [2, -1]
-
-rotation_angle = calculate_rotation_angle(start_coords, current_coords, future_coords)
-print(f"Rotation Angle: {rotation_angle} degrees")

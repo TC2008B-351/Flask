@@ -72,6 +72,7 @@ class TrafficModel(Model):
                     finished_cars.append(agent)
                     creating_positions.add(agent.pos)
 
+            """
             #   This handles were a car is going out and a car wants to enter
             for car in finished_cars:
                 for agent in self.schedule.agents:
@@ -79,6 +80,7 @@ class TrafficModel(Model):
                         finished_cars.append(agent)
                         print(car.pos)
                         print(car)
+            """
 
             # Remove finished cars from the schedule and the grid
             for car in finished_cars:
@@ -106,14 +108,20 @@ class TrafficModel(Model):
             # Handle the exception here, you can log it or print an error message
             print(f"An error occurred: {e}")
 
-
     def getState(self):
         carPositions = []
         for agent in self.schedule.agents:
             if isinstance(agent, CarAgent):
                 id = agent.unique_id
-                x_coord, y_coord = agent.pos
-                rotation = agent.rotationToPos
-                carPositions.append([id, x_coord, y_coord, rotation])
+                x1_coord, y1_coord = agent.pos
+                try:
+                    x2_coord, y2_coord = agent.path[0]
+                except IndexError:
+                    x2_coord, y2_coord = agent.pos
+                try:
+                    x3_coord, y3_coord = agent.path[1]
+                except IndexError:
+                    x3_coord, y3_coord = x2_coord, y2_coord
+                carPositions.append([id, x1_coord, y1_coord, x2_coord, y2_coord, x3_coord, y3_coord])
         return sorted(carPositions, key= lambda x: x[0])
 
