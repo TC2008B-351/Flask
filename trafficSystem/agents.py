@@ -81,7 +81,7 @@ class SemaphoreAgent(Agent):
     def __init__(self, unique_id, model, pos, state):
         super().__init__(unique_id, model)
         self.pos = pos
-        self.state = state # States: "red", "green"
+        self.state = state # States: "red", "green", "yellow"
         self.timer = 5  # Initial Time
 
     def change_state(self):
@@ -89,8 +89,11 @@ class SemaphoreAgent(Agent):
             self.state = 'green'
             self.timer = 3  # Green light duration
         elif self.state == 'green' and self.timer == 0:
+            self.state = 'yellow'
+            self.timer = 1  # Red light duration
+        elif self.state == 'yellow' and self.timer == 0:
             self.state = 'red'
-            self.timer = 3  # Red light duration
+            self.timer = 2  # Red light duration
         else:
             self.timer -= 1
 

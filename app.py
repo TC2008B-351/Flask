@@ -22,9 +22,27 @@ def toJSON(lists):
     result_dict = {"Items": cars_list}
     return result_dict
 
+def toJSONSem(lists):
+    sem_List = [
+        {
+            "id": json.dumps(sem_data[0]),
+            "s1": json.dumps(sem_data[1])
+        }
+        for sem_data in lists]
+    result_dict1 = {"Semaphores": sem_List}
+    return result_dict1
+
+
 @app.route('/')
 def index():
     return "My API is running!"
+
+@app.route('getSemaphoreState', methods=['GET'])
+def getStateSemaph():
+    if request.method == 'GET':
+        state = model.getSemaphore()
+        return toJSON(state)
+
 
 @app.route('/getState', methods=['GET'])
 def getPositions():
@@ -39,4 +57,5 @@ if __name__ == '__main__':
     print("Initial State:")
     print(toJSON(intial_state))
     app.run(debug=True, port=8000)
+
 
