@@ -3,7 +3,7 @@ from logging import info
 from .logging.log_conf import setup_logging
 from mesa import Model
 from mesa.space import MultiGrid
-from mesa.time import RandomActivation
+from mesa.time import SimultaneousActivation
 from .agents import CarAgent, ParkingLotAgent, BuildingAgent, SemaphoreAgent
 from .map import IntersectionPoints, Parkings, OutGoingCarPoints, Buildings, Semaphores, grid_size
 from .aStar import create_graph, astar, manhattan_distance, display_path_on_grid
@@ -21,7 +21,7 @@ class TrafficModel(Model):
         self.G = create_graph(IntersectionPoints)
         self.num_agents = n_agents  # unused
         self.grid = MultiGrid(width, height, True)
-        self.schedule = RandomActivation(self)
+        self.schedule = SimultaneousActivation(self)
         self.ids = 1
 
         """ Create agents """
@@ -62,6 +62,12 @@ class TrafficModel(Model):
     def step(self):
         try:
             self.schedule.step()
+        except Exception as e:
+            # Handle the exception here, you can log it or print an error message
+            print(f"An error occurred: {e}")
+        """
+        try:
+
             finished_cars = []
             creating_positions = set()
             conflicting_cars = []
@@ -72,7 +78,7 @@ class TrafficModel(Model):
                     finished_cars.append(agent)
                     creating_positions.add(agent.pos)
 
-            """
+
             #   This handles were a car is going out and a car wants to enter
             for car in finished_cars:
                 for agent in self.schedule.agents:
@@ -80,14 +86,14 @@ class TrafficModel(Model):
                         finished_cars.append(agent)
                         print(car.pos)
                         print(car)
-            """
+
 
             # Remove finished cars from the schedule and the grid
             for car in finished_cars:
                 self.grid.remove_agent(car)
                 self.schedule.remove(car)
 
-            """
+
             # Check parking lots and create new cars
             if creating_positions:
                 for pos in creating_positions:
@@ -102,11 +108,12 @@ class TrafficModel(Model):
                     self.schedule.add(c)
                     self.grid.place_agent(c, starting_pos)
                 print(f"New cars generated: {len(creating_positions)}")
-                 """
+
 
         except Exception as e:
             # Handle the exception here, you can log it or print an error message
             print(f"An error occurred: {e}")
+        """
 
     def getCarState(self):
         carPositions = []
@@ -130,7 +137,7 @@ class TrafficModel(Model):
         for agent in self.schedule.agents:
             if isinstance(agent, SemaphoreAgent):
                 id = agent.unique_id
+                pos = agent.pos
                 state = agent.state
-                carLights.append([id, state])
+                carLights.append([id, pos, state])
         return sorted(carLights, key= lambda x: x[0])
-

@@ -26,7 +26,8 @@ def semaphoreToJSON(lists):
     sem_list = [
         {
             "id": json.dumps(sem_data[0]),
-            "state": json.dumps(sem_data[1])
+            "position": json.dumps(sem_data[1]),
+            "state": sem_data[2]
         }
         for sem_data in lists]
     result_dict = {"Semaphores": sem_list}
@@ -36,24 +37,25 @@ def semaphoreToJSON(lists):
 def index():
     return "My API is running!"
 
-@app.route('getSemaphoreState', methods=['GET'])
+@app.route('/getSemaphoreState', methods=['GET'])
 def getSemaphoreState():
     if request.method == 'GET':
         state = model.getSemaphoreState()
-        return carToJSON(state)
+        return semaphoreToJSON(state)
 
 @app.route('/getState', methods=['GET'])
 def getCarPositions():
     if request.method == 'GET':
         state = model.getCarState()
         model.step()
-        #print(toJSON(state))
-        return semaphoreToJSON(state)
+        return carToJSON(state)
 
 if __name__ == '__main__':
-    intial_state = model.getState()
-    #print("Initial State:")
-    #print(toJSON(intial_state))
+    intial_car_state = model.getCarState()
+    intial_semaphore_state = model.getSemaphoreState()
+    print("Initial State:")
+    print(carToJSON(intial_car_state))
+    print(semaphoreToJSON(intial_semaphore_state))
     app.run(debug=True, port=8000)
 
 

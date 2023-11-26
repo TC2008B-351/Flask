@@ -1,7 +1,6 @@
 import math
 from mesa import Agent
 
-
 def calculate_rotation_angle(past_coords, current_coords, future_coords):
     # Calculate vectors
     vector1 = [current_coords[0] - past_coords[0], current_coords[1] - past_coords[1]]
@@ -67,6 +66,7 @@ class ParkingLotAgent(Agent):
         super().__init__(unique_id, model)
         self.pos = pos
 
+
 class BuildingAgent(Agent):
     def __init__(self, unique_id, model, pos, color):
         super().__init__(unique_id, model)
@@ -82,21 +82,18 @@ class SemaphoreAgent(Agent):
         super().__init__(unique_id, model)
         self.pos = pos
         self.state = state # States: "red", "green", "yellow"
-        self.timer = 0  # Initial Time
+        self.timer = 3  # Initial Time
 
     def change_state(self):
         if self.state == 'red' and self.timer == 0:
             self.state = 'green'
             self.timer = 3  # Green light duration
-
-        elif self.state == 'green' and self.timer == 0:
+        elif self.state == 'yellow' and self.timer == 0:
             self.state = 'red'
-            self.timer = 3  # Yellow light duration
-            """
-            elif self.state == 'green' and self.timer == 0:
-                self.state = 'red'
-                self.timer = 2  # Red light duration
-            """
+            self.timer = 2  # Red light duration
+        elif self.state == 'green' and self.timer == 0:
+            self.state = 'yellow'
+            self.timer = 1  # Yellow light duration
         else:
             self.timer -= 1
 
