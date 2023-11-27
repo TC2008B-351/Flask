@@ -96,6 +96,14 @@ class TrafficModel(Model):
             # Handle the exception here, you can log it or print an error message
             print(f"An error occurred: {e}")
 
+    def getInitialCarState(self):
+        carPositions = []
+        for agent in self.schedule.agents:
+            if isinstance(agent, CarAgent):
+                id = agent.unique_id
+                x_coord, y_coord = agent.pos
+                carPositions.append([id, x_coord, y_coord])
+        return sorted(carPositions, key= lambda x: x[0])
 
     def getCarState(self):
         carPositions = []
