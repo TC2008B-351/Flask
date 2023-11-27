@@ -1,3 +1,6 @@
+"""
+Traffic Model
+"""
 import random
 from logging import info
 from .logging.log_conf import setup_logging
@@ -5,8 +8,9 @@ from mesa import Model
 from mesa.space import MultiGrid
 from mesa.time import SimultaneousActivation
 from .agents import CarAgent, ParkingLotAgent, BuildingAgent, SemaphoreAgent
-from .map import IntersectionPoints, Parkings, OutGoingCarPoints, Buildings, Semaphores, grid_size
-from .aStar import create_graph, astar, manhattan_distance, display_path_on_grid
+from .map import Parkings, Buildings, Semaphores
+from .completeMap import OptionMap
+from .aStar import create_maximal_graph, astarComplete, manhattan_distance
 
 # Import the logging configuration
 setup_logging()
@@ -17,24 +21,25 @@ class TrafficModel(Model):
     their destination.
     """
 
-    def __init__(self, width, height, n_agents):
-        self.G = create_graph(IntersectionPoints)
-        self.num_agents = n_agents  # unused
+    def __init__(self, width, height, n_cars):
+        self.G = create_maximal_graph(OptionMap)
+        self.num_cars = n_cars
+        self.num_finished_cars = 0
+        self.completedCars = 0
         self.grid = MultiGrid(width, height, True)
         self.schedule = SimultaneousActivation(self)
         self.ids = 1
 
         """ Create agents """
         # Car agents
-        starts = Parkings[:]
-        targets = Parkings[:]
-        for _ in range(len(Parkings)):
-            starting_pos = starts.pop(0)
-            target_pos = targets.pop()
-            if starting_pos == target_pos:
-                starting_pos = starts[0]
-            path = astar(self.G, starting_pos, target_pos, manhattan_distance)
-            c = CarAgent(self.ids, self, starting_pos, path)
+        options = list(OptionMap.keys())
+        for _ in range(self.num_cars):
+            starting_pos = random.choice(options)
+            target_pos = random.choice(Parkings)
+            while starting_pos == target_pos:
+                starting_pos = random.choice(options)
+            path = astarComplete(self.G, starting_pos, target_pos, manhattan_distance)
+            c = CarAgent(self.ids, self, starting_pos, target_pos, path)
             self.ids += 1
             self.schedule.add(c)
             self.grid.place_agent(c, starting_pos)
@@ -62,37 +67,14 @@ class TrafficModel(Model):
     def step(self):
         try:
             self.schedule.step()
-        except Exception as e:
-            # Handle the exception here, you can log it or print an error message
-            print(f"An error occurred: {e}")
-        """
-        try:
-
-            finished_cars = []
-            creating_positions = set()
-            conflicting_cars = []
-
-            # Check cars that have reached its destination
             for agent in self.schedule.agents:
                 if isinstance(agent, CarAgent) and agent.reached_final_position():
-                    finished_cars.append(agent)
-                    creating_positions.add(agent.pos)
+                    self.grid.remove_agent(agent)
+                    self.schedule.remove(agent)
+                    self.num_finished_cars += 1
 
 
-            #   This handles were a car is going out and a car wants to enter
-            for car in finished_cars:
-                for agent in self.schedule.agents:
-                    if isinstance(agent, CarAgent) and OutGoingCarPoints[car.pos] == agent.pos:
-                        finished_cars.append(agent)
-                        print(car.pos)
-                        print(car)
-
-
-            # Remove finished cars from the schedule and the grid
-            for car in finished_cars:
-                self.grid.remove_agent(car)
-                self.schedule.remove(car)
-
+            """
 
             # Check parking lots and create new cars
             if creating_positions:
@@ -109,11 +91,11 @@ class TrafficModel(Model):
                     self.grid.place_agent(c, starting_pos)
                 print(f"New cars generated: {len(creating_positions)}")
 
-
+             """
         except Exception as e:
             # Handle the exception here, you can log it or print an error message
             print(f"An error occurred: {e}")
-        """
+
 
     def getCarState(self):
         carPositions = []
