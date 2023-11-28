@@ -1,5 +1,8 @@
 import math
 from mesa import Agent
+import random
+from .map import Parkings
+from .aStar import astarComplete, manhattan_distance
 
 class CarAgent(Agent):
     def __init__(self, unique_id, model, pos, t_pos, path):
@@ -8,10 +11,24 @@ class CarAgent(Agent):
         self.target_pos = t_pos
         self.path = path
         self.rotationToPos = 0
+        self.jammedCounter = 0
+
+    def recalculateNewPath(self):
+        new_target_pos = random.choice(Parkings)
+        while new_target_pos == self.target_pos:
+            new_target_pos = random.choice(Parkings)
+        self.target_pos = new_target_pos
+        self.path = astarComplete(self.model.G, self.pos, self.target_pos, manhattan_distance)
+        self.jammedCounter = 0
 
     def move(self):
         if not self.path:
             return
+        
+        # If the car has been in a jam for 5 steps, recalculate the path to a new target Parking
+        if self.jammedCounter >= 5:
+            self.recalculateNewPath()
+
         target_coordinates = self.path[0]
         current_coords = target_coordinates
         cell_contents = self.model.grid.get_cell_list_contents([target_coordinates])
@@ -27,6 +44,11 @@ class CarAgent(Agent):
                 self.model.grid.move_agent(self, target_coordinates)
                 self.pos = target_coordinates
                 self.path.pop(0)
+                # If the car is not jammed, then the jammedCounter is reset
+                self.jammedCounter = 0
+            # If there is a car, then is jammed and the jammedCounter is increased
+            else:
+                self.jammedCounter += 1
 
     def step(self):
         self.move()

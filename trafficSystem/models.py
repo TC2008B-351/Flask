@@ -10,7 +10,7 @@ from mesa.time import SimultaneousActivation
 from .agents import CarAgent, ParkingLotAgent, BuildingAgent, SemaphoreAgent
 from .map import Parkings, Buildings, Semaphores
 from .completeMap import OptionMap
-from .aStar import create_maximal_graph, astarComplete, manhattan_distance
+from .aStar import create_maximal_graph, astarComplete, manhattan_distance, display_path_on_grid
 
 # Import the logging configuration
 setup_logging()
@@ -43,6 +43,10 @@ class TrafficModel(Model):
             self.ids += 1
             self.schedule.add(c)
             self.grid.place_agent(c, starting_pos)
+            # Logs
+            info(f"Car {c.unique_id} created at {starting_pos} with target {target_pos}")
+            info(f"Path: {path}")
+            info(display_path_on_grid(path, (width, height)))
         # Parking Lot agents
         for coord in Parkings:
             pl = ParkingLotAgent(self.ids, self, coord)
@@ -73,25 +77,6 @@ class TrafficModel(Model):
                     self.schedule.remove(agent)
                     self.num_finished_cars += 1
 
-
-            """
-
-            # Check parking lots and create new cars
-            if creating_positions:
-                for pos in creating_positions:
-                    starting_pos = random.choice(Parkings)
-                    target_pos = pos
-                    while target_pos == starting_pos:
-                        starting_pos = random.choice(Parkings)
-                    print(f"Generating car at {starting_pos} to {target_pos}")
-                    path = astar(self.G, starting_pos, target_pos, manhattan_distance)
-                    c = CarAgent(self.ids, self, starting_pos, path)
-                    self.ids += 1
-                    self.schedule.add(c)
-                    self.grid.place_agent(c, starting_pos)
-                print(f"New cars generated: {len(creating_positions)}")
-
-             """
         except Exception as e:
             # Handle the exception here, you can log it or print an error message
             print(f"An error occurred: {e}")
