@@ -72,7 +72,7 @@ class TrafficModel(Model):
         try:
             self.schedule.step()
             for agent in self.schedule.agents:
-                if isinstance(agent, CarAgent) and agent.reached_final_position():
+                if isinstance(agent, CarAgent) and agent.reached_goal:
                     self.grid.remove_agent(agent)
                     self.schedule.remove(agent)
                     self.num_finished_cars += 1

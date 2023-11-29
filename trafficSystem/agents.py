@@ -12,6 +12,7 @@ class CarAgent(Agent):
         self.path = path
         self.rotationToPos = 0
         self.jammedCounter = 0
+        self.reached_goal = False
 
     def recalculateNewPath(self):
         new_target_pos = random.choice(Parkings)
@@ -23,6 +24,7 @@ class CarAgent(Agent):
 
     def move(self):
         if not self.path:
+            self.reached_goal = True
             return
         
         # If the car has been in a jam for 5 steps, recalculate the path to a new target Parking

@@ -5,7 +5,7 @@ from trafficSystem.map import grid_size
 
 app = Flask(__name__)
 
-model = TrafficModel(grid_size, grid_size, 17)
+model = TrafficModel(grid_size, grid_size, 30)
 
 def initialCarToJSON(lists):
     cars_list = [
