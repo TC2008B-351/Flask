@@ -20,18 +20,7 @@ class TrafficModel(Model):
     A model that simulates traffic flow. From cars agents trying to reach
     their destination.
     """
-
-    def __init__(self, width, height, n_cars):
-        self.G = create_maximal_graph(OptionMap)
-        self.num_cars = n_cars
-        self.num_finished_cars = 0
-        self.completedCars = 0
-        self.grid = MultiGrid(width, height, True)
-        self.schedule = SimultaneousActivation(self)
-        self.ids = 1
-
-        """ Create agents """
-        # Car agents
+    def create_car_agents(self):
         options = list(OptionMap.keys())
         for _ in range(self.num_cars):
             starting_pos = random.choice(options)
@@ -43,10 +32,18 @@ class TrafficModel(Model):
             self.ids += 1
             self.schedule.add(c)
             self.grid.place_agent(c, starting_pos)
-            # Logs
-            info(f"Car {c.unique_id} created at {starting_pos} with target {target_pos}")
-            info(f"Path: {path}")
-            info(display_path_on_grid(path, (width, height)))
+
+    def __init__(self, width, height, n_cars):
+        self.G = create_maximal_graph(OptionMap)
+        self.num_cars = n_cars
+        self.completedCars = 0
+        self.grid = MultiGrid(width, height, True)
+        self.schedule = SimultaneousActivation(self)
+        self.ids = 1
+
+        """ Create agents """
+        # Car agents
+        self.create_car_agents()
         # Parking Lot agents
         for coord in Parkings:
             pl = ParkingLotAgent(self.ids, self, coord)
@@ -75,8 +72,11 @@ class TrafficModel(Model):
                 if isinstance(agent, CarAgent) and agent.reached_goal:
                     self.grid.remove_agent(agent)
                     self.schedule.remove(agent)
-                    self.num_finished_cars += 1
+                    self.completedCars += 1
 
+            if self.completedCars == self.num_cars:
+                self.create_car_agents()
+                self.completedCars = 0
         except Exception as e:
             # Handle the exception here, you can log it or print an error message
             print(f"An error occurred: {e}")

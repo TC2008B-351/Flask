@@ -26,13 +26,12 @@ class CarAgent(Agent):
         if not self.path:
             self.reached_goal = True
             return
-        
+
         # If the car has been in a jam for 5 steps, recalculate the path to a new target Parking
         if self.jammedCounter >= 5:
             self.recalculateNewPath()
 
         target_coordinates = self.path[0]
-        current_coords = target_coordinates
         cell_contents = self.model.grid.get_cell_list_contents([target_coordinates])
         # checks for semaphores
         traffic_lights = [obj for obj in cell_contents if isinstance(obj, SemaphoreAgent)]
