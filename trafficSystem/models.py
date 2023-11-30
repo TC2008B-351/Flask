@@ -41,9 +41,13 @@ class TrafficModel(Model):
         self.schedule = SimultaneousActivation(self)
         self.ids = 1
 
-        """ Create agents """
-        # Car agents
-        self.create_car_agents()
+        # Semaphore agents
+        for data in Semaphores:
+            coord, state = data
+            s = SemaphoreAgent(self.ids, self, coord, state)
+            self.ids += 1
+            self.schedule.add(s)
+            self.grid.place_agent(s, coord)
         # Parking Lot agents
         for coord in Parkings:
             pl = ParkingLotAgent(self.ids, self, coord)
@@ -57,13 +61,9 @@ class TrafficModel(Model):
             self.ids += 1
             self.schedule.add(b)
             self.grid.place_agent(b, coord)
-        # Semaphore agents
-        for data in Semaphores:
-            coord, state = data
-            s = SemaphoreAgent(self.ids, self, coord, state)
-            self.ids += 1
-            self.schedule.add(s)
-            self.grid.place_agent(s, coord)
+        """ Create agents """
+        # Car agents
+        self.create_car_agents()
 
     def step(self):
         try:
