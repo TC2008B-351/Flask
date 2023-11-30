@@ -5,7 +5,7 @@ from trafficSystem.map import grid_size
 
 app = Flask(__name__)
 
-model = TrafficModel(grid_size, grid_size, 30)
+model = TrafficModel(grid_size, grid_size, 10)
 
 def initialCarToJSON(lists):
     cars_list = [
@@ -41,7 +41,7 @@ def semaphoreToJSON(lists):
             "state": sem_data[2]
         }
         for sem_data in lists]
-    result_dict = {"Semaphores": sem_list}
+    result_dict = {"Items": sem_list}
     return result_dict
 
 @app.route('/')
